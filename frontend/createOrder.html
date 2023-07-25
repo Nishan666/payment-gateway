@@ -1,0 +1,75 @@
+<!-- Run this first -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div>
+        <form id="CreateOrder">
+            <input type="text" name="amount" id="amount" placeholder="amount">
+            <br>
+            <input type="radio" id="inr" name="currency" value="INR">
+            <label for="inr">INR</label><br>
+            <input type="radio" id="usd" name="currency" value="USD">
+            <label for="usd">USD</label><br>
+            <input type="radio" id="yen" name="currency" value="YEN">
+            <label for="yen">YEN</label>
+            <br>
+            <input type="text" name="recipt" id="recipt" placeholder="recipt">
+            <br>
+            <input type="text" name="notes" id="notes" placeholder="notes">
+            <br>
+            <button type="submit" id="CreateOrder">Create Order</button>
+        </form>
+    </div>
+</body>
+<script>
+
+CreateOrder.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const formData = new FormData(e.target);      //og way to get form data
+  const formProps = Object.fromEntries(formData);
+  console.log(formProps);
+
+  if(formProps){
+    getAllStations()
+  }
+
+
+        async function getAllStations() {
+            try {
+                const response = await fetch("http://localhost:5000/createorder",  //post request with order data
+                    {
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        method: "POST",
+                        body: JSON.stringify({
+                            "amount": formProps.amount,
+                            "currency": formProps.currency,
+                            "receipt": formProps.receipt,
+                            "notes": formProps.notes
+                        })
+                    })
+
+                const object = await response.json();
+                console.log(object.id);
+                if (object.id) {
+                window.location = "index.html";   //after getting the order id redirect page to payment
+                }
+
+            } catch (e) {
+                console.log(`Error: ${e}`)
+            }
+        }
+})
+</script>
+
+</html>
